@@ -20,7 +20,7 @@ async def main():
     ChatCompletionToolParam(
         type="function",
         function={
-            "name": f'{tool["service_name"]}_{tool["tool_name"]}',
+            "name": f'{tool["service_name"]}00_{tool["tool_name"]}',
             "description": tool["tool_description"],
             "parameters": tool["tool_parameters"],
         },

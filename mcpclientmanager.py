@@ -19,6 +19,7 @@ class ClientManager:
         """Load the server file which contains MCP server details"""
         with open(server_file, "r") as f:
             server_details = yaml.safe_load(f)
+        logger.info(f"reading the config file {server_file}")
         for server in server_details["servers"]:
             self._add_server(**server)
 
@@ -32,16 +33,15 @@ class ClientManager:
         """Connect to all the servers in mcpserver.yaml"""
         for client in self.clients:
             await client.connect_sse_client()
-
+        logger.info("sse connect established")
         #store all the connections in the pydantic format in p_model_type
         for client in self.clients:
             self.tools.extend(client.all_tools)
-            logger.info(f"avaailable tools: {self.tools}")
 
             for tool in client.all_tools:
                 logger.info(f"client.all_tools: {tool}")
-                self.tool_dict[f'{tool["service_name"]}_{tool["tool_name"]}'] = client# create a dict key with server name, tool name version and author so that it can be distinguishable for the client.
-            logger.info(f"available tool_dict: {self.tool_dict}")
+                self.tool_dict[f'{tool["service_name"]}00_{tool["tool_name"]}'] = client# create a dict key with server name, tool name version and author so that it can be distinguishable for the client.
+            logger.info(f"Third Party MCP tools across all servers: {self.tool_dict}")
 
     def get_tool(self):
         """Get the tool from the client manager"""
@@ -50,18 +50,12 @@ class ClientManager:
     async def process_tool_call(self, tool_calls:List[ChatCompletionMessageToolCall]) -> List[Dict[str, Any]]:
         """Process the tool call and return the response"""
         responses = []
-        logger.info(f"all tools inside process_tool_call: {tool_calls}")
-        logger.info(f"tool_dict: {self.tool_dict}")
         for tool_call in tool_calls:
-            logger.info(f"tool_call: {tool_call}")
-            logger.info(f"tool name picked from tool call: {tool_call.function.name}")
-            tool_name = tool_call.function.name.split("_")[1]
+            tool_name = tool_call.function.name.split("00_")[1]
             tool_args = json.loads(tool_call.function.arguments)
             client = self.tool_dict.get(tool_call.function.name)
-            logger.info(f"tool args: {tool_args}")
-            logger.info(f"client details for the tool_name selected: {client}")
+            logger.info(f"Selected details process tool call: {client} {tool_call} {tool_call.function.name} {tool_name} {tool_args}")
             if client:
-                logger.info(f"inside the client since we have found the client: {tool_name} {tool_args}")
                 # response = await client.call_tool(tool_name, tool_args)
                 response = await client.call_tool(tool_name=tool_name, tool_args=tool_args)
                 # logger.info(f"response from the tool: {response}")

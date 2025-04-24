@@ -47,15 +47,14 @@ class MCPClient:
             self.session = await self._session_context.__aenter__()
             await self.session.initialize()
             # logger.info(f"connected to the server {self.transport} {self.server_name} {self.server_url}")
-            logger.info(f"connected to the server {self.server_name} {self.server_url}")
-
+            logger.info(f"session initialization done {self.server_name} {self.server_url}")
+            logger.info(f"listing tools initialized")
             tools_list = await self.session.list_tools()
             tools = tools_list.tools
-            logger.info(f"all tools availble from the server.yaml: {tools}")
 
             self.all_tools = [
                 tools_list_details(
-                    service_name = self.server_name[0],
+                    service_name = self.server_name,
                     service_url = self.server_url,
                     sevice_description = self.description,
                     service_author = self.author,
@@ -67,7 +66,7 @@ class MCPClient:
                 ).model_dump()
                 for tool in tools
             ]
-            logger.info(f"available tools: {self.all_tools}")
+            logger.info(f"ALL third party MCP server tools: {self.all_tools}")
         except Exception as e:
             logger.error(f"Failed to connect to SSE client for {self.server_name}: {e}")
             raise
