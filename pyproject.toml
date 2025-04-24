@@ -1,0 +1,16 @@
+[project]
+name = "testing-mcp-server"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "bs4>=0.0.2",
+    "langchain>=0.3.24",
+    "langchain-community>=0.3.22",
+    "langchain-openai>=0.3.14",
+    "mcp>=1.6.0",
+    "openai>=1.75.0",
+    "pydantic>=2.11.3",
+    "pyyaml>=6.0.2",
+]
